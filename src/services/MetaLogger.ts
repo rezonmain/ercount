@@ -12,6 +12,10 @@ class MetaLogger extends Logger {
     this.writer?.flush();
   }
 
+  overwrite(meta: FileMeta): void {
+    Files.write(this.path, JSON.stringify(meta, null, this.OUT_FILE_INDENT));
+  }
+
   async parseLogFile(): Promise<FileMeta> {
     const fileContents = await Files.read(this.path);
     return JSON.parse(fileContents);
