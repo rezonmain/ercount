@@ -1,10 +1,5 @@
 import { FileSink } from "bun";
-import {
-  ChatterMessageLog,
-  LogTypes,
-  OutFileSchema,
-  ViewCountLog,
-} from "@/types/logger.types";
+import { LogTypes } from "@/types/logger.types";
 import { Files } from "@/services/Files";
 
 abstract class Logger {
