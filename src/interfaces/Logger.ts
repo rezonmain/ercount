@@ -10,8 +10,15 @@ abstract class Logger {
     this.writer = omitWriter ? undefined : Files.getFileWriter(path);
   }
 
+  /**
+   * Close the file writer
+   */
   end = () => this.writer?.end();
 
+  /**
+   * Parses the payload and writes it to the file
+   * @param payload - The data to log
+   */
   abstract log(payload: LogTypes): void;
 }
 

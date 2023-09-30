@@ -19,6 +19,12 @@ class TwitchAPI {
     return now < expiresAt;
   }
 
+  /**
+   * Wrapper around `fetch` that handles Authorization headers
+   * @param input
+   * @param init
+   *
+   */
   private async request<T>(
     input: Request | string,
     init?: RequestInit
@@ -49,6 +55,9 @@ class TwitchAPI {
     this.token = data;
   }
 
+  /**
+   * Get the current live streams for a channel
+   */
   async getStreams(channel: string): Promise<StreamResponseDTO[]> {
     const params = new URLSearchParams({
       user_login: channel,

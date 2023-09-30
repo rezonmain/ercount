@@ -6,6 +6,7 @@ import { TwitchAPI } from "./TwitchAPI.js";
 class TwitchCollector extends Collector {
   private chat;
   private api;
+
   constructor(channelName: string) {
     super(channelName);
     this.chat = new tmi.Client({
@@ -17,6 +18,7 @@ class TwitchCollector extends Collector {
   _start(): void {
     this.chat.connect();
     this.registerChatListeners();
+    this.scheduleJobs();
   }
 
   _stop(): void {
@@ -45,6 +47,8 @@ class TwitchCollector extends Collector {
       });
     });
   }
+
+  private scheduleJobs() {}
 }
 
 export { TwitchCollector };
