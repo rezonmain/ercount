@@ -2,7 +2,7 @@ import c from "config";
 import type {
   StreamResponseDTO,
   TokenResponseDTO,
-} from "../types/twitchApi.types.js";
+} from "@/types/twitchApi.types.js";
 import { NotLiveError } from "@/interfaces/Errors.js";
 
 class TwitchAPI {

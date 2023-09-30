@@ -1,8 +1,8 @@
+import { AsyncTask, SimpleIntervalJob, ToadScheduler } from "toad-scheduler";
+import tmi from "tmi.js";
 import type { ViewCountLog } from "@/types/logger.types";
 import { Collector } from "@/interfaces/Collector";
-import tmi from "tmi.js";
 import { TwitchAPI } from "@/services/TwitchAPI";
-import { AsyncTask, SimpleIntervalJob, ToadScheduler } from "toad-scheduler";
 
 class TwitchCollector extends Collector {
   private chat;
