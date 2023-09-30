@@ -10,11 +10,6 @@ import { ViewsLogger } from "@/services/ViewsLogger";
 import { MetaLogger } from "@/services/MetaLogger";
 
 abstract class Collector {
-  private OUT_FILE_DIR = "./data";
-  private CHATTER_LOG_EXT = "chatters.log";
-  private VIEW_COUNT_LOG_EXT = "views.log";
-  private OUT_FILE_EXT = "json";
-  private META_FILE_EXT = "meta.json";
   private getCuid2: () => string = cuid2({ length: 4 });
   protected VIEW_COUNT_SAMPLE_RATE = 1000 * 60 * 10; // 10 minutes
   protected logTimes: TimesLog = { init: new Date(), end: new Date() };
@@ -68,20 +63,15 @@ abstract class Collector {
       this.channelName
     }_${this.logTimes.init.toISOString()}`;
 
-    // Get the log file paths
-    const logFilePaths = this.getLogFilePaths({
-      base: this.base,
-    });
-
     const streamTitle = await this.getStreamTitle();
     this.stats.streamTitle = streamTitle;
 
     // Initialize the loggers
     this.loggers = {
-      out: new OutLogger(logFilePaths.out),
-      chatters: new ChattersLogger(logFilePaths.chatters),
-      views: new ViewsLogger(logFilePaths.views),
-      meta: new MetaLogger(logFilePaths.meta),
+      out: new OutLogger(this.base),
+      chatters: new ChattersLogger(this.base),
+      views: new ViewsLogger(this.base),
+      meta: new MetaLogger(this.base),
     };
 
     // Log the initial meta data
@@ -104,7 +94,7 @@ abstract class Collector {
     this.logTimes.end = new Date();
 
     // Complete the meta log with the end time
-    this.loggers?.meta.overwrite({
+    this.loggers?.meta.log({
       ...(await this.loggers?.meta.parseLogFile()),
       logTimes: this.logTimes,
     });
@@ -122,13 +112,6 @@ abstract class Collector {
     // Execute collector implementation stop method
     this._stop();
   }
-
-  private getLogFilePaths = ({ base }: { base: string }) => ({
-    out: `${this.OUT_FILE_DIR}/${base}.${this.OUT_FILE_EXT}`,
-    chatters: `${this.OUT_FILE_DIR}/${base}.${this.CHATTER_LOG_EXT}`,
-    views: `${this.OUT_FILE_DIR}/${base}.${this.VIEW_COUNT_LOG_EXT}`,
-    meta: `${this.OUT_FILE_DIR}/${base}.${this.META_FILE_EXT}`,
-  });
 
   /**
    * Handle when a chatter sends a message
