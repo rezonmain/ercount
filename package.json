@@ -3,16 +3,19 @@
   "module": "index.ts",
   "type": "module",
   "devDependencies": {
-    "bun-types": "latest",
-    "eslint": "^8.50.0",
+    "@types/config": "^3.3.1",
+    "@types/tmi.js": "^1.8.4",
     "@typescript-eslint/eslint-plugin": "^5.60.1",
-    "@typescript-eslint/parser": "^5.60.1"
+    "@typescript-eslint/parser": "^5.60.1",
+    "bun-types": "latest",
+    "eslint": "^8.50.0"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "config": "^3.3.9"
+    "config": "^3.3.9",
+    "tmi.js": "^1.8.5"
   },
   "eslintConfig": {
     "extends": [
