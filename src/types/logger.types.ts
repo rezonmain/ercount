@@ -1,4 +1,4 @@
-type LogFileType = "chatters" | "views" | "out";
+type LogFileType = "chatters" | "views" | "out" | "meta";
 
 interface ViewCountLog {
   count: number;
