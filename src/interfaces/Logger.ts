@@ -3,12 +3,30 @@ import type { LogTypes } from "@/types/logger.types";
 import { Files } from "@/services/Files";
 
 abstract class Logger {
+  private LOG_FILE_DIR = "./data";
   protected OUT_FILE_INDENT = 2;
+  protected logFileExtension: string;
   protected writer: FileSink | undefined;
+  protected path;
+  protected base;
 
-  constructor(protected path: string, omitWriter = false) {
-    this.writer = omitWriter ? undefined : Files.getFileWriter(path);
+  constructor({
+    base,
+    logFileExtension,
+    omitWriter = false,
+  }: {
+    base: string;
+    logFileExtension: string;
+    omitWriter?: boolean;
+  }) {
+    this.base = base;
+    this.logFileExtension = logFileExtension;
+    this.path = this.getFilePath();
+    this.writer = omitWriter ? undefined : Files.getFileWriter(this.path);
   }
+
+  protected getFilePath = (): string =>
+    `${this.LOG_FILE_DIR}/${this.base}${this.logFileExtension}`;
 
   /**
    * Close the file writer

@@ -1,10 +1,10 @@
 import { Logger } from "@/interfaces/Logger";
 import type { ViewCountLog } from "@/types/logger.types";
-import { Files } from "./Files";
+import { Files } from "@/services/Files";
 
 class ViewsLogger extends Logger {
-  constructor(path: string) {
-    super(path);
+  constructor(base: string) {
+    super({ base, logFileExtension: ".views.log" });
   }
 
   log({ ts, count }: ViewCountLog): void {
@@ -15,7 +15,7 @@ class ViewsLogger extends Logger {
 
   async parseLogFile(): Promise<ViewCountLog[]> {
     const fileContents = await Files.read(this.path);
-    const lines = fileContents.split("\n");
+    const lines = fileContents.trim().split("\n");
     return lines.map((line) => {
       const [ts, count] = line.split(" ");
       return { ts, count: parseInt(count) };

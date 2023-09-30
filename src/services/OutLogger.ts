@@ -1,21 +1,14 @@
 import { Logger } from "@/interfaces/Logger";
 import type { OutFileSchema } from "@/types/logger.types";
-import { Files } from "./Files";
+import { Files } from "@/services/Files";
 
 class OutLogger extends Logger {
-  constructor(path: string) {
-    super(path, true);
+  constructor(base: string) {
+    super({ base, logFileExtension: ".out.json", omitWriter: true });
   }
 
-  log({ viewerCounts, chatters, fileMeta }: OutFileSchema): void {
-    Files.write(
-      this.path,
-      JSON.stringify(
-        { fileMeta, viewerCounts, chatters },
-        null,
-        this.OUT_FILE_INDENT
-      )
-    );
+  log(outFile: OutFileSchema): void {
+    Files.write(this.path, JSON.stringify(outFile, null, this.OUT_FILE_INDENT));
   }
 
   async parseLogFile(): Promise<OutFileSchema> {
