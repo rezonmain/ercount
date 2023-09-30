@@ -1,15 +1,19 @@
-# ercount-bun
+# ercount
 
-To install dependencies:
+Log stream chat and run analytics
+
+## Install dependencies:
+
+While in the root directory
 
 ```bash
 bun install
 ```
 
-To run:
+## Run dev:
+
+Entry point of app is src/index.ts
 
 ```bash
-bun run index.ts
+bun run dev
 ```
-
-This project was created using `bun init` in bun v1.0.3. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
