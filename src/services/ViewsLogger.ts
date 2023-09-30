@@ -1,5 +1,5 @@
 import { Logger } from "@/interfaces/Logger";
-import { ViewCountLog } from "@/types/logger.types";
+import type { ViewCountLog } from "@/types/logger.types";
 import { Files } from "./Files";
 
 class ViewsLogger extends Logger {

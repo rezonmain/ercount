@@ -1,5 +1,5 @@
 import { init as cuid2 } from "@paralleldrive/cuid2";
-import {
+import type {
   ChatterMessageLog,
   TimesLog,
   ViewCountLog,
@@ -24,7 +24,7 @@ abstract class Collector {
     views: ViewsLogger;
     meta: MetaLogger;
   };
-  base: string = "";
+  base = "";
   stats = {
     viewerCount: 0,
     streamTitle: "",

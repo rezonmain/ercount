@@ -11,7 +11,7 @@ class TwitchAPI {
   private clientSecret = c.get("twitch.clientSecret");
   private grantType = "client_credentials";
   private token?: TokenResponseDTO;
-  private sinceToken: number = 0;
+  private sinceToken = 0;
 
   private isTokenValid(): boolean {
     if (!this.token) return false;

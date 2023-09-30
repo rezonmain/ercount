@@ -1,5 +1,5 @@
 import { Logger } from "@/interfaces/Logger";
-import { OutFileSchema } from "@/types/logger.types";
+import type { OutFileSchema } from "@/types/logger.types";
 import { Files } from "./Files";
 
 class OutLogger extends Logger {

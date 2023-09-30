@@ -1,9 +1,5 @@
 import { Logger } from "@/interfaces/Logger";
-import {
-  ChatterMessageLog,
-  OutFileSchema,
-  ViewCountLog,
-} from "@/types/logger.types";
+import type { ChatterMessageLog } from "@/types/logger.types";
 import { Files } from "./Files";
 
 class ChattersLogger extends Logger {

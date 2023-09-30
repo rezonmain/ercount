@@ -1,5 +1,5 @@
 import { Logger } from "@/interfaces/Logger";
-import { FileMeta } from "@/types/logger.types";
+import type { FileMeta } from "@/types/logger.types";
 import { Files } from "@/services/Files";
 
 class MetaLogger extends Logger {

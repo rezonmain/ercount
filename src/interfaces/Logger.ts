@@ -1,5 +1,5 @@
-import { FileSink } from "bun";
-import { LogTypes } from "@/types/logger.types";
+import type { FileSink } from "bun";
+import type { LogTypes } from "@/types/logger.types";
 import { Files } from "@/services/Files";
 
 abstract class Logger {
