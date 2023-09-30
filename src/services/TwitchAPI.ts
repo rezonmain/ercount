@@ -3,6 +3,7 @@ import type {
   StreamResponseDTO,
   TokenResponseDTO,
 } from "../types/twitchApi.types.js";
+import { NotLiveError } from "@/interfaces/Errors.js";
 
 class TwitchAPI {
   private tokenURL = "https://id.twitch.tv/oauth2/token";
@@ -66,6 +67,10 @@ class TwitchAPI {
     });
     const url = `https://api.twitch.tv/helix/streams?${params}`;
     const response = await this.request<{ data: StreamResponseDTO[] }>(url);
+
+    if (!response.data.length)
+      throw new NotLiveError(`Channel ${channel} is not live.`);
+
     return response.data;
   }
 }
