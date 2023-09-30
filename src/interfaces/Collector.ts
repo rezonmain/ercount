@@ -117,7 +117,7 @@ abstract class Collector {
     });
 
     // End all the logger's write streams
-    Object.values(this.loggers!).forEach((logger) => logger.end());
+    Object.values(this.loggers ?? {}).forEach((logger) => logger.end());
 
     // Execute collector implementation stop method
     this._stop();
