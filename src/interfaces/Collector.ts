@@ -18,13 +18,13 @@ abstract class Collector {
   private getCuid2: () => string = cuid2({ length: 4 });
   protected VIEW_COUNT_SAMPLE_RATE = 1000 * 60 * 10; // 10 minutes
   protected logTimes: TimesLog = { init: new Date(), end: new Date() };
-  protected base: string = "";
   protected loggers?: {
     out: OutLogger;
     chatters: ChattersLogger;
     views: ViewsLogger;
     meta: MetaLogger;
   };
+  base: string = "";
   stats = {
     viewerCount: 0,
     streamTitle: "",
@@ -73,6 +73,9 @@ abstract class Collector {
       base: this.base,
     });
 
+    const streamTitle = await this.getStreamTitle();
+    this.stats.streamTitle = streamTitle;
+
     // Initialize the loggers
     this.loggers = {
       out: new OutLogger(logFilePaths.out),
@@ -81,17 +84,13 @@ abstract class Collector {
       meta: new MetaLogger(logFilePaths.meta),
     };
 
-    const streamTitle = await this.getStreamTitle();
-
     // Log the initial meta data
     this.loggers.meta.log({
       channelName: this.channelName,
       logTimes: this.logTimes,
-      streamTitles: [streamTitle],
+      streamTitles: [this.stats.streamTitle],
       viewerCountSampleIntervalMs: this.VIEW_COUNT_SAMPLE_RATE,
     });
-
-    this.stats.streamTitle = streamTitle;
 
     // Execute collector implementation start method
     this._start();
@@ -105,7 +104,7 @@ abstract class Collector {
     this.logTimes.end = new Date();
 
     // Complete the meta log with the end time
-    this.loggers?.meta.log({
+    this.loggers?.meta.overwrite({
       ...(await this.loggers?.meta.parseLogFile()),
       logTimes: this.logTimes,
     });
