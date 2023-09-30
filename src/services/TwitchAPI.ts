@@ -1,0 +1,66 @@
+import { get } from "config";
+import type {
+  StreamResponseDTO,
+  TokenResponseDTO,
+} from "../types/twitchApi.types.js";
+
+class TwitchAPI {
+  private tokenURL = "https://id.twitch.tv/oauth2/token";
+  private clientID = get("twitch.clientID");
+  private clientSecret = get("twitch.clientSecret");
+  private grantType = "client_credentials";
+  private token?: TokenResponseDTO;
+  private sinceToken: number;
+
+  constructor() {
+    this.setToken();
+  }
+
+  private isTokenValid(): boolean {
+    if (!this.token) return false;
+    const now = Date.now();
+    const expiresAt = this.sinceToken + this.token.expires_in * 1000;
+    return now < expiresAt;
+  }
+
+  private async request<T>(
+    input: RequestInfo | URL,
+    init?: RequestInit
+  ): Promise<T> {
+    if (this.isTokenValid()) {
+      await this.setToken();
+    }
+
+    const headers = new Headers({
+      Authorization: `Bearer ${this.token}`,
+    });
+
+    const response = await fetch(input, { ...init, headers });
+    const data = (await response.json()) as T;
+    return data;
+  }
+
+  private async setToken() {
+    const response = await fetch(`${this.tokenURL}`, {
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: `client_id=${this.clientID}&client_secret=${this.clientSecret}&grant_type=${this.grantType}`,
+      method: "POST",
+    });
+    const data = (await response.json()) as TokenResponseDTO;
+    this.sinceToken = Date.now();
+    this.token = data;
+  }
+
+  async getStreams(channel: string): Promise<StreamResponseDTO[]> {
+    const params = new URLSearchParams({
+      user_login: channel,
+      type: "live",
+      first: "1",
+    });
+    const url = `https://api.twitch.tv/helix/streams?${params}`;
+    const response = await this.request<{ data: StreamResponseDTO[] }>(url);
+    return response.data;
+  }
+}
+
+export { TwitchAPI };
