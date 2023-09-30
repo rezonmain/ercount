@@ -18,9 +18,9 @@ class OutLogger extends Logger {
     );
   }
 
-  async parseLogFile(): Promise<OutFileSchema[]> {
+  async parseLogFile(): Promise<OutFileSchema> {
     const fileContents = await Files.read(this.path);
-    return [JSON.parse(fileContents)];
+    return JSON.parse(fileContents);
   }
 }
 
