@@ -1,25 +1,20 @@
 import { init as cuid2 } from "@paralleldrive/cuid2";
 import type {
   ChatterMessageLog,
+  LoggerSuite,
   TimesLog,
   ViewCountLog,
 } from "@/types/logger.types.js";
-import { ChattersLogger } from "@/services/ChattersLogger";
-import { OutLogger } from "@/services/OutLogger";
-import { ViewsLogger } from "@/services/ViewsLogger";
-import { MetaLogger } from "@/services/MetaLogger";
+import { Helpers } from "@/services/Helpers";
+import { Analytics } from "@/services/Analytics";
 
 abstract class Collector {
   private getCuid2: () => string = cuid2({ length: 4 });
   protected VIEW_COUNT_SAMPLE_RATE = 1000 * 60 * 10; // 10 minutes
-  protected logTimes: TimesLog = { init: new Date(), end: new Date() };
-  protected loggers?: {
-    out: OutLogger;
-    chatters: ChattersLogger;
-    views: ViewsLogger;
-    meta: MetaLogger;
-  };
+  protected logTimes: TimesLog = { init: "", end: "" };
+  protected loggers?: LoggerSuite;
   base = "";
+  analytics = new Analytics();
   stats = {
     viewerCount: 0,
     streamTitle: "",
@@ -57,22 +52,17 @@ abstract class Collector {
    */
   async start(): Promise<void> {
     // Set the start time
-    this.logTimes.init = new Date();
+    this.logTimes.init = new Date().toISOString();
 
-    this.base = `${this.getCuid2()}_${
-      this.channelName
-    }_${this.logTimes.init.toISOString()}`;
+    this.base = `${this.getCuid2()}_${this.channelName}_${this.logTimes.init}`;
+
+    this.analytics = new Analytics(this.base);
 
     const streamTitle = await this.getStreamTitle();
     this.stats.streamTitle = streamTitle;
 
     // Initialize the loggers
-    this.loggers = {
-      out: new OutLogger(this.base),
-      chatters: new ChattersLogger(this.base),
-      views: new ViewsLogger(this.base),
-      meta: new MetaLogger(this.base),
-    };
+    this.loggers = Helpers.logger.getAllLoggers(this.base);
 
     // Log the initial meta data
     this.loggers.meta.log({
@@ -91,7 +81,7 @@ abstract class Collector {
    */
   async stop() {
     // Set the stop time
-    this.logTimes.end = new Date();
+    this.logTimes.end = new Date().toISOString();
 
     // Complete the meta log with the end time
     this.loggers?.meta.log({
