@@ -2,17 +2,22 @@ import { ViewCountLog } from "@/types/logger.types.js";
 import { Collector } from "../interfaces/Collector.js";
 import tmi from "tmi.js";
 import { TwitchAPI } from "./TwitchAPI.js";
+import { AsyncTask, SimpleIntervalJob, ToadScheduler } from "toad-scheduler";
 
 class TwitchCollector extends Collector {
   private chat;
   private api;
+  private scheduler: ToadScheduler;
 
   constructor(channelName: string) {
     super(channelName);
+
     this.chat = new tmi.Client({
       channels: [channelName],
     });
+
     this.api = new TwitchAPI();
+    this.scheduler = new ToadScheduler();
   }
 
   _start(): void {
@@ -23,6 +28,7 @@ class TwitchCollector extends Collector {
 
   _stop(): void {
     this.chat.disconnect();
+    this.scheduler.stop();
   }
 
   async getCurrentViewerCount(): Promise<ViewCountLog> {
@@ -48,7 +54,20 @@ class TwitchCollector extends Collector {
     });
   }
 
-  private scheduleJobs() {}
+  private scheduleJobs() {
+    const viewsTask = new AsyncTask(this.base + "_views", async () => {
+      const views = await this.getCurrentViewerCount();
+      this.loggers?.views.log(views);
+      this.stats.viewerCount = views.count;
+    });
+
+    const viewsJob = new SimpleIntervalJob(
+      { milliseconds: this.VIEW_COUNT_SAMPLE_RATE, runImmediately: true },
+      viewsTask
+    );
+
+    this.scheduler.addSimpleIntervalJob(viewsJob);
+  }
 }
 
 export { TwitchCollector };
