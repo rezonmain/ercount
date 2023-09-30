@@ -1,4 +1,4 @@
-import { get } from "config";
+import c from "config";
 import type {
   StreamResponseDTO,
   TokenResponseDTO,
@@ -6,15 +6,11 @@ import type {
 
 class TwitchAPI {
   private tokenURL = "https://id.twitch.tv/oauth2/token";
-  private clientID = get("twitch.clientID");
-  private clientSecret = get("twitch.clientSecret");
+  private clientID = c.get("twitch.clientID");
+  private clientSecret = c.get("twitch.clientSecret");
   private grantType = "client_credentials";
   private token?: TokenResponseDTO;
-  private sinceToken: number;
-
-  constructor() {
-    this.setToken();
-  }
+  private sinceToken: number = 0;
 
   private isTokenValid(): boolean {
     if (!this.token) return false;
@@ -24,18 +20,20 @@ class TwitchAPI {
   }
 
   private async request<T>(
-    input: RequestInfo | URL,
+    input: Request | string,
     init?: RequestInit
   ): Promise<T> {
-    if (this.isTokenValid()) {
+    if (!this.isTokenValid()) {
       await this.setToken();
     }
 
-    const headers = new Headers({
-      Authorization: `Bearer ${this.token}`,
+    const response = await fetch(input, {
+      ...init,
+      headers: {
+        Authorization: `Bearer ${this.token?.access_token}`,
+        "Client-Id": this.clientID,
+      } as HeadersInit,
     });
-
-    const response = await fetch(input, { ...init, headers });
     const data = (await response.json()) as T;
     return data;
   }
