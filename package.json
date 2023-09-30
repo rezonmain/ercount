@@ -1,5 +1,5 @@
 {
-  "name": "ercount-bun",
+  "name": "ercount",
   "module": "src/index.ts",
   "type": "module",
   "scripts": {
