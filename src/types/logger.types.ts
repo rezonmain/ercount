@@ -19,8 +19,8 @@ interface TimesLog {
 interface FileMeta {
   channelName: string;
   logTimes: TimesLog;
-  streamTitles?: string[];
-  viewerCountSampleIntervalMs: number;
+  streamTitles: string[];
+  viewerCountSampleIntervalMs?: number;
 }
 
 interface OutFileSchema {
@@ -29,7 +29,7 @@ interface OutFileSchema {
   fileMeta?: FileMeta;
 }
 
-type LogTypes = ViewCountLog | ChatterMessageLog | OutFileSchema;
+type LogTypes = ViewCountLog | ChatterMessageLog | OutFileSchema | FileMeta;
 
 export type {
   ViewCountLog,
