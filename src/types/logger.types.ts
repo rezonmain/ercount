@@ -1,19 +1,22 @@
-type LogFileType = "chatters" | "views" | "out" | "meta";
+import type { ChattersLogger } from "@/services/ChattersLogger";
+import type { MetaLogger } from "@/services/MetaLogger";
+import type { OutLogger } from "@/services/OutLogger";
+import type { ViewsLogger } from "@/services/ViewsLogger";
 
 interface ViewCountLog {
   count: number;
-  ts: string;
+  ts: string; // ISO string
 }
 
 interface ChatterMessageLog {
   displayName: string;
   message: string;
-  ts: string;
+  ts: string; // ISO string
 }
 
 interface TimesLog {
-  init: Date;
-  end: Date;
+  init: string; // ISO string
+  end: string; // ISO string
 }
 
 interface FileMeta {
@@ -31,12 +34,19 @@ interface OutFileSchema {
 
 type LogTypes = ViewCountLog | ChatterMessageLog | OutFileSchema | FileMeta;
 
+type LoggerSuite = {
+  out: OutLogger;
+  chatters: ChattersLogger;
+  views: ViewsLogger;
+  meta: MetaLogger;
+};
+
 export type {
-  ViewCountLog,
   ChatterMessageLog,
   OutFileSchema,
+  ViewCountLog,
+  LoggerSuite,
   FileMeta,
   TimesLog,
-  LogFileType,
   LogTypes,
 };
