@@ -34,9 +34,7 @@ class Helpers {
   };
 
   static analytics = {
-    getViewCount: (
-      viewCountLogs: ViewCountLog[]
-    ): Record<"max" | "min" | "avg", number> => {
+    getViewCount: (viewCountLogs: ViewCountLog[]): ViewCountStats => {
       const viewCounts = viewCountLogs.map((log) => log.count);
       return {
         max: Math.max(...viewCounts),
