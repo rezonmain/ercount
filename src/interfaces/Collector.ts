@@ -13,6 +13,7 @@ abstract class Collector {
   protected VIEW_COUNT_SAMPLE_RATE = 1000 * 60 * 10; // 10 minutes
   protected logTimes: TimesLog = { init: "", end: "" };
   protected loggers?: LoggerSuite;
+  running = false;
   base = "";
   analytics = new Analytics();
   stats = {
@@ -74,12 +75,14 @@ abstract class Collector {
 
     // Execute collector implementation start method
     this._start();
+    this.running = true;
   }
 
   /**
    * Stop the collector, finalize data logging, clean up write stream
    */
   async stop() {
+    if (!this.running) return;
     // Set the stop time
     this.logTimes.end = new Date().toISOString();
 
@@ -101,6 +104,7 @@ abstract class Collector {
 
     // Execute collector implementation stop method
     this._stop();
+    this.running = false;
   }
 
   /**
