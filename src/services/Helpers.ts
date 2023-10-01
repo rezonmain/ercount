@@ -52,10 +52,7 @@ class Helpers {
       };
     },
 
-    getTally: (
-      chatterMessages: ChatterMessageLog[],
-      viewCount: ViewCountStats
-    ): Tally[] => {
+    getTally: (chatterMessages: ChatterMessageLog[]): Tally[] => {
       const tally: Tally[] = [];
       const chatters = new Set(chatterMessages.map((log) => log.displayName));
 
@@ -64,13 +61,11 @@ class Helpers {
           (log) => log.displayName === chatter
         ).length;
         const ratioOfTotalChats = chats / chatterMessages.length;
-        const ratioOfTotalViewers = chats / viewCount.max;
 
         tally.push({
           displayName: chatter,
           chats,
           ratioOfTotalChats,
-          ratioOfTotalViewers,
         });
       });
 
