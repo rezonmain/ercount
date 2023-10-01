@@ -1,19 +1,24 @@
 import type { LoggerSuite } from "@/types/logger.types";
 import { Helpers } from "./Helpers";
+import type {
+  ChattersStats,
+  Tally,
+  ViewCountStats,
+} from "@/types/analytics.types";
 
 class Analytics {
   private _durationSeconds = 0;
-  private _viewCount: Record<"max" | "min" | "avg", number> = {
+  private _viewCount: ViewCountStats = {
     max: 0,
     min: 0,
     avg: 0,
   };
-  private _chatters: Record<"unique" | "total", number> = {
+  private _chatters: ChattersStats = {
     unique: 0,
-    total: 0,
+    totalChats: 0,
+    ratioOfTotalViewers: 1,
   };
-  private _messages: Record<"total", number> = { total: 0 };
-  private _tally?: Record<string, number> = {};
+  private _tally: Tally[] = [];
   private loggers?: LoggerSuite;
   done = false;
 
@@ -23,21 +28,21 @@ class Analytics {
     this.loggers = Helpers.logger.getAllLoggers(this.base);
 
     const { logTimes } = await this.loggers.meta.parseLogFile();
-    console.log(logTimes);
     const viewCountLogs = await this.loggers.views.parseLogFile();
     const chatterMessages = await this.loggers.chatters.parseLogFile();
 
     const durationSeconds = Helpers.time.getDurationSeconds(logTimes);
 
-    const tally = Helpers.analytics.getTally(chatterMessages);
-    const messagesCount = { total: chatterMessages.length };
     const viewCount = Helpers.analytics.getViewCount(viewCountLogs);
     const chattersCount = Helpers.analytics.getChattersCount(chatterMessages);
+    const tally = Helpers.analytics.getTally(chatterMessages, viewCount);
 
     this._durationSeconds = durationSeconds;
     this._viewCount = viewCount;
-    this._chatters = chattersCount;
-    this._messages = messagesCount;
+    this._chatters = {
+      ...chattersCount,
+      ratioOfTotalViewers: chattersCount.totalChats / viewCount.max,
+    };
     this._tally = tally;
     this.done = true;
   }
@@ -52,10 +57,6 @@ class Analytics {
 
   get chatters() {
     return this._chatters;
-  }
-
-  get messages() {
-    return this._messages;
   }
 
   get tally() {

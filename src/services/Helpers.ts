@@ -7,6 +7,11 @@ import { ChattersLogger } from "./ChattersLogger";
 import { MetaLogger } from "./MetaLogger";
 import { OutLogger } from "./OutLogger";
 import { ViewsLogger } from "./ViewsLogger";
+import type {
+  ChattersStats,
+  Tally,
+  ViewCountStats,
+} from "@/types/analytics.types";
 
 class Helpers {
   static logger = {
@@ -42,22 +47,37 @@ class Helpers {
 
     getChattersCount: (
       chatterMessages: ChatterMessageLog[]
-    ): Record<"unique" | "total", number> => {
+    ): Omit<ChattersStats, "ratioOfTotalViewers"> => {
       return {
         unique: new Set(chatterMessages.map((log) => log.displayName)).size,
-        total: chatterMessages.length,
+        totalChats: chatterMessages.length,
       };
     },
 
-    getTally: (chatterMessages: ChatterMessageLog[]): Record<string, number> =>
-      chatterMessages.reduce((acc, curr) => {
-        if (acc[curr.displayName]) {
-          acc[curr.displayName] += 1;
-        } else {
-          acc[curr.displayName] = 1;
-        }
-        return acc;
-      }, {} as Record<string, number>),
+    getTally: (
+      chatterMessages: ChatterMessageLog[],
+      viewCount: ViewCountStats
+    ): Tally[] => {
+      const tally: Tally[] = [];
+      const chatters = new Set(chatterMessages.map((log) => log.displayName));
+
+      chatters.forEach((chatter) => {
+        const chats = chatterMessages.filter(
+          (log) => log.displayName === chatter
+        ).length;
+        const ratioOfTotalChats = chats / chatterMessages.length;
+        const ratioOfTotalViewers = chats / viewCount.max;
+
+        tally.push({
+          displayName: chatter,
+          chats,
+          ratioOfTotalChats,
+          ratioOfTotalViewers,
+        });
+      });
+
+      return tally.sort((a, b) => b.chats - a.chats);
+    },
   };
 }
 
