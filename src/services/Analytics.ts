@@ -2,21 +2,29 @@ import type { LoggerSuite } from "@/types/logger.types";
 import { Helpers } from "./Helpers";
 import type {
   ChattersStats,
+  DurationStats,
+  EngagementStats,
   Tally,
   ViewCountStats,
 } from "@/types/analytics.types";
 
 class Analytics {
-  private _durationSeconds = 0;
-  private _viewCount: ViewCountStats = {
+  private _duration: DurationStats = {
+    durationInHours: 0,
+    durationInSeconds: 0,
+  };
+  private _viewCountStats: ViewCountStats = {
     max: 0,
     min: 0,
     avg: 0,
   };
-  private _chatters: ChattersStats = {
+  private _chattersStats: ChattersStats = {
     unique: 0,
     totalChats: 0,
-    ratioOfTotalViewers: 1,
+  };
+  private _engagement: EngagementStats = {
+    engagement: 0,
+    engagementPerHour: 0,
   };
   private _tally: Tally[] = [];
   private loggers?: LoggerSuite;
@@ -31,36 +39,48 @@ class Analytics {
     const viewCountLogs = await this.loggers.views.parseLogFile();
     const chatterMessages = await this.loggers.chatters.parseLogFile();
 
-    const durationSeconds = Helpers.time.getDurationSeconds(logTimes);
+    const durationInSeconds = Helpers.time.getDurationSeconds(logTimes);
+    const durationInHours = durationInSeconds / 3600;
 
-    const viewCount = Helpers.analytics.getViewCount(viewCountLogs);
-    const chattersCount = Helpers.analytics.getChattersCount(chatterMessages);
-    const tally = Helpers.analytics.getTally(chatterMessages, viewCount);
+    const viewCountStats = Helpers.analytics.getViewCount(viewCountLogs);
+    const chattersStats = Helpers.analytics.getChattersCount(chatterMessages);
+    const tally = Helpers.analytics.getTally(chatterMessages);
 
-    this._durationSeconds = durationSeconds;
-    this._viewCount = viewCount;
-    this._chatters = {
-      ...chattersCount,
-      ratioOfTotalViewers: chattersCount.totalChats / viewCount.max,
+    const engagement = chattersStats.unique / viewCountStats.avg;
+    const engagementPerHour = engagement / durationInHours;
+
+    this._duration = {
+      durationInHours,
+      durationInSeconds,
     };
+    this._viewCountStats = viewCountStats;
+    this._chattersStats = chattersStats;
     this._tally = tally;
+    this._engagement = {
+      engagement,
+      engagementPerHour,
+    };
     this.done = true;
   }
 
-  get durationSeconds() {
-    return this._durationSeconds;
+  get duration() {
+    return this._duration;
   }
 
-  get viewCount() {
-    return this._viewCount;
+  get views() {
+    return this._viewCountStats;
   }
 
   get chatters() {
-    return this._chatters;
+    return this._chattersStats;
   }
 
   get tally() {
     return this._tally;
+  }
+
+  get engagement() {
+    return this._engagement;
   }
 }
 
