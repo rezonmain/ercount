@@ -20,10 +20,12 @@ process.on("SIGINT", async () => {
 
 for await (const line of console) {
   if (line === "stop") {
-    twitchCollector.stop();
+    await twitchCollector.stop();
     break;
   }
 }
 
 await twitchCollector.analytics.calculate();
-console.log(twitchCollector.analytics);
+console.log("chatters", twitchCollector.analytics.chatters);
+console.log("views", twitchCollector.analytics.viewCount);
+console.log("duration", twitchCollector.analytics.durationSeconds);
