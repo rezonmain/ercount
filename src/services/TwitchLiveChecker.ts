@@ -4,7 +4,7 @@ import { NotLiveError } from "@/interfaces/Errors";
 import { Debug } from "@/services/Debug";
 
 class TwitchLiveChecker extends LiveChecker {
-  private OFFLINE_RETRY_LIMIT = 3;
+  private OFFLINE_RETRY_LIMIT = 6;
   private offlineCount = 0;
   private api: TwitchAPI;
 

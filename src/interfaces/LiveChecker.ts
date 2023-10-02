@@ -3,7 +3,7 @@ import { AsyncTask, SimpleIntervalJob, ToadScheduler } from "toad-scheduler";
 abstract class LiveChecker {
   protected channelName: string;
   protected onStreamOffline: () => void;
-  private LIVE_CHECK_INTERVAL = 1000 * 30; // 30 seconds
+  private LIVE_CHECK_INTERVAL = 1000 * 15; // 15 seconds
   private scheduler: ToadScheduler = new ToadScheduler();
 
   constructor({
@@ -24,7 +24,7 @@ abstract class LiveChecker {
     );
 
     const liveCheckJob = new SimpleIntervalJob(
-      { milliseconds: this.LIVE_CHECK_INTERVAL, runImmediately: true },
+      { milliseconds: this.LIVE_CHECK_INTERVAL },
       liveCheckTask
     );
 
