@@ -1,4 +1,4 @@
-import type { LoggerSuite } from "@/types/logger.types";
+import type { FileMeta, LoggerSuite } from "@/types/logger.types";
 import { Helpers } from "./Helpers";
 import type {
   ChattersStats,
@@ -28,6 +28,14 @@ class Analytics {
   };
   private _tally: Tally[] = [];
   private loggers?: LoggerSuite;
+  private meta: FileMeta = {
+    channelName: "",
+    logTimes: {
+      init: "",
+      end: "",
+    },
+    streamTitles: [],
+  };
   done = false;
 
   constructor(private base: string = "default") {}
@@ -35,11 +43,11 @@ class Analytics {
   async calculate(): Promise<void> {
     this.loggers = Helpers.logger.getAllLoggers(this.base);
 
-    const { logTimes } = await this.loggers.meta.parseLogFile();
+    const meta = await this.loggers.meta.parseLogFile();
     const viewCountLogs = await this.loggers.views.parseLogFile();
     const chatterMessages = await this.loggers.chatters.parseLogFile();
 
-    const durationInSeconds = Helpers.time.getDurationSeconds(logTimes);
+    const durationInSeconds = Helpers.time.getDurationSeconds(meta.logTimes);
     const durationInHours = durationInSeconds / 3600;
 
     const viewCountStats = Helpers.analytics.getViewCount(viewCountLogs);
@@ -49,6 +57,7 @@ class Analytics {
     const engagement = chattersStats.unique / viewCountStats.avg;
     const engagementPerHour = engagement / durationInHours;
 
+    this.meta = meta;
     this._duration = {
       durationInHours,
       durationInSeconds,
@@ -61,6 +70,20 @@ class Analytics {
       engagementPerHour,
     };
     this.done = true;
+  }
+
+  async log(): Promise<void> {
+    if (!this.done) {
+      await this.calculate();
+    }
+    this.loggers?.out.log({
+      fileMeta: this.meta,
+      duration: this._duration,
+      views: this._viewCountStats,
+      chatters: this._chattersStats,
+      engagement: this._engagement,
+      tally: this._tally,
+    });
   }
 
   get duration() {
