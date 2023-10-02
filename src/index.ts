@@ -25,7 +25,4 @@ for await (const line of console) {
   }
 }
 
-await twitchCollector.analytics.calculate();
-console.log("chatters", twitchCollector.analytics.chatters.unique);
-console.log("views", twitchCollector.analytics.views);
-console.log("duration", twitchCollector.analytics.engagement.engagementPerHour);
+await twitchCollector.analytics.log();
