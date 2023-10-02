@@ -3,11 +3,14 @@ import tmi from "tmi.js";
 import type { ViewCountLog } from "@/types/logger.types";
 import { Collector } from "@/interfaces/Collector";
 import { TwitchAPI } from "@/services/TwitchAPI";
+import type { LiveChecker } from "@/interfaces/LiveChecker";
+import { TwitchLiveChecker } from "./TwitchLiveChecker";
 
 class TwitchCollector extends Collector {
   private chat;
   private api;
   private scheduler: ToadScheduler;
+  private liveChecker: LiveChecker;
 
   constructor(channelName: string) {
     super(channelName);
@@ -18,17 +21,23 @@ class TwitchCollector extends Collector {
 
     this.api = new TwitchAPI();
     this.scheduler = new ToadScheduler();
+    this.liveChecker = new TwitchLiveChecker({
+      channelName,
+      onStreamOffline: this.stop.bind(this),
+    });
   }
 
   _start(): void {
     this.chat.connect();
     this.registerChatListeners();
     this.scheduleJobs();
+    this.liveChecker.start();
   }
 
   _stop(): void {
     this.chat.disconnect();
     this.scheduler.stop();
+    this.liveChecker.stop();
   }
 
   async getCurrentViewerCount(): Promise<ViewCountLog> {
