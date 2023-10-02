@@ -113,6 +113,21 @@ class Helpers {
       return Bun.file(path).writer();
     },
   };
+
+  static debug = {
+    getLogEmoji: (type: "info" | "error" | "success" = "info"): string => {
+      switch (type) {
+        case "info":
+          return "➡️";
+        case "error":
+          return "❌";
+        case "success":
+          return "✅";
+        default:
+          return "➡️";
+      }
+    },
+  };
 }
 
 export { Helpers };
