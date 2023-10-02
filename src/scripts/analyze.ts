@@ -8,7 +8,7 @@ if (!base) {
   process.exit(1);
 }
 
-if (!Helpers.file.exists(base + ".meta.json")) {
+if (!(await Helpers.file.exists(base + ".meta.json"))) {
   console.error("No meta file found for the provided base");
   process.exit(1);
 }
