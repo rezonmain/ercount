@@ -2,6 +2,13 @@ import type { ChattersLogger } from "@/services/ChattersLogger";
 import type { MetaLogger } from "@/services/MetaLogger";
 import type { OutLogger } from "@/services/OutLogger";
 import type { ViewsLogger } from "@/services/ViewsLogger";
+import type {
+  ChattersStats,
+  DurationStats,
+  EngagementStats,
+  Tally,
+  ViewCountStats,
+} from "@/types/analytics.types";
 
 interface ViewCountLog {
   count: number;
@@ -27,9 +34,12 @@ interface FileMeta {
 }
 
 interface OutFileSchema {
-  viewerCounts: ViewCountLog[];
-  chatters: ChatterMessageLog[];
-  fileMeta?: FileMeta;
+  fileMeta: FileMeta;
+  duration: DurationStats;
+  chatters: ChattersStats;
+  views: ViewCountStats;
+  engagement: EngagementStats;
+  tally: Tally[];
 }
 
 type LogTypes = ViewCountLog | ChatterMessageLog | OutFileSchema | FileMeta;
