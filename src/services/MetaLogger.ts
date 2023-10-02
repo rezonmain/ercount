@@ -1,6 +1,6 @@
 import { Logger } from "@/interfaces/Logger";
 import type { FileMeta } from "@/types/logger.types";
-import { Files } from "@/services/Files";
+import { Helpers } from "@/services/Helpers";
 
 class MetaLogger extends Logger {
   constructor(base: string) {
@@ -8,11 +8,14 @@ class MetaLogger extends Logger {
   }
 
   log(meta: FileMeta): void {
-    Files.write(this.path, JSON.stringify(meta, null, this.OUT_FILE_INDENT));
+    Helpers.file.write(
+      this.path,
+      JSON.stringify(meta, null, this.OUT_FILE_INDENT)
+    );
   }
 
   async parseLogFile(): Promise<FileMeta> {
-    const fileContents = await Files.read(this.path);
+    const fileContents = await Helpers.file.read(this.path);
     return JSON.parse(fileContents);
   }
 }

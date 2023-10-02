@@ -1,3 +1,4 @@
+import fs from "fs/promises";
 import type {
   ChatterMessageLog,
   LoggerSuite,
@@ -70,6 +71,46 @@ class Helpers {
       });
 
       return tally.sort((a, b) => b.chats - a.chats);
+    },
+  };
+
+  static file = {
+    exists: async (path: string): Promise<boolean> =>
+      await Bun.file(path).exists(),
+
+    /**
+     * Equivalent to `ls` in bash
+     * @param path
+     * @param filterOutList - list of files to filter out
+     * @returns list of file names in the directory
+     */
+    ls: async (path: string, filterOutList: string[] = []): Promise<string[]> =>
+      (await fs.readdir(path)).filter((f) => !filterOutList.includes(f)),
+
+    /**
+     * Read a text file
+     * @param path
+     * @returns Text content of the file
+     */
+    read: async (path: string): Promise<string> => {
+      return await Bun.file(path).text();
+    },
+
+    write: async (path: string, content: string) => {
+      Bun.write(path, content);
+    },
+
+    mkdir: async (path: string) => {
+      await fs.mkdir(path, { recursive: true });
+    },
+
+    /**
+     * Get a writer for a file for incremental writes
+     * @param path
+     * @returns A FileSink
+     */
+    getFileWriter: (path: string) => {
+      return Bun.file(path).writer();
     },
   };
 }

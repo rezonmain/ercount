@@ -1,6 +1,6 @@
 import type { FileSink } from "bun";
 import type { LogTypes } from "@/types/logger.types";
-import { Files } from "@/services/Files";
+import { Helpers } from "@/services/Helpers";
 
 abstract class Logger {
   private LOG_FILE_DIR = "./data";
@@ -22,7 +22,9 @@ abstract class Logger {
     this.base = base;
     this.logFileExtension = logFileExtension;
     this.path = this.getFilePath();
-    this.writer = omitWriter ? undefined : Files.getFileWriter(this.path);
+    this.writer = omitWriter
+      ? undefined
+      : Helpers.file.getFileWriter(this.path);
   }
 
   protected getFilePath = (): string =>

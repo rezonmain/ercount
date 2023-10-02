@@ -1,6 +1,6 @@
 import { Logger } from "@/interfaces/Logger";
 import type { OutFileSchema } from "@/types/logger.types";
-import { Files } from "@/services/Files";
+import { Helpers } from "@/services/Helpers";
 
 class OutLogger extends Logger {
   constructor(base: string) {
@@ -8,11 +8,14 @@ class OutLogger extends Logger {
   }
 
   log(outFile: OutFileSchema): void {
-    Files.write(this.path, JSON.stringify(outFile, null, this.OUT_FILE_INDENT));
+    Helpers.file.write(
+      this.path,
+      JSON.stringify(outFile, null, this.OUT_FILE_INDENT)
+    );
   }
 
   async parseLogFile(): Promise<OutFileSchema> {
-    const fileContents = await Files.read(this.path);
+    const fileContents = await Helpers.file.read(this.path);
     return JSON.parse(fileContents);
   }
 }

@@ -1,5 +1,5 @@
 import { Analytics } from "@/services/Analytics";
-import { Files } from "@/services/Files";
+import { Helpers } from "@/services/Helpers";
 
 const base = process.argv[2];
 
@@ -8,7 +8,7 @@ if (!base) {
   process.exit(1);
 }
 
-if (!Files.exists(base + ".meta.json")) {
+if (!Helpers.file.exists(base + ".meta.json")) {
   console.error("No meta file found for the provided base");
   process.exit(1);
 }
