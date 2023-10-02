@@ -7,6 +7,7 @@ import type {
 } from "@/types/logger.types.js";
 import { Helpers } from "@/services/Helpers";
 import { Analytics } from "@/services/Analytics";
+import { Debug } from "@/services/Debug";
 
 abstract class Collector {
   private getCuid2: () => string = cuid2({ length: 4 });
@@ -52,6 +53,7 @@ abstract class Collector {
    * Start the collector, initialize data logging
    */
   async start(): Promise<void> {
+    Debug.info(`Starting collector for ${this.channelName}`);
     // Set the start time
     this.logTimes.init = new Date().toISOString();
 
@@ -76,6 +78,7 @@ abstract class Collector {
     // Execute collector implementation start method
     this._start();
     this.running = true;
+    Debug.success(`Collector started for ${this.channelName}`);
   }
 
   /**
@@ -98,6 +101,7 @@ abstract class Collector {
     // Execute collector implementation stop method
     this._stop();
     this.running = false;
+    Debug.success(`Collector stopped for ${this.channelName}`);
   }
 
   /**
