@@ -92,13 +92,6 @@ abstract class Collector {
       logTimes: this.logTimes,
     });
 
-    // Log the final stats
-    this.loggers?.out.log({
-      fileMeta: await this.loggers.meta.parseLogFile(),
-      viewerCounts: await this.loggers.views.parseLogFile(),
-      chatters: await this.loggers.chatters.parseLogFile(),
-    });
-
     // End all the logger's write streams
     Object.values(this.loggers ?? {}).forEach((logger) => logger.end());
 
