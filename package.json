@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "NODE_ENV=dev bun --hot src/index.ts",
     "start-dev": "NODE_ENV=dev bun run src/index.ts",
+    "analyze": "bun run src/scripts/analyze.ts",
     "lint": "eslint . --ext .ts"
   },
   "devDependencies": {
