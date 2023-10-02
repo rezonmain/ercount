@@ -7,6 +7,7 @@ import type {
   Tally,
   ViewCountStats,
 } from "@/types/analytics.types";
+import { Debug } from "./Debug";
 
 class Analytics {
   private _duration: DurationStats = {
@@ -41,6 +42,7 @@ class Analytics {
   constructor(private base: string = "default") {}
 
   async calculate(): Promise<void> {
+    Debug.info(`Calculating analytics for ${this.base}`);
     this.loggers = Helpers.logger.getAllLoggers(this.base);
 
     const meta = await this.loggers.meta.parseLogFile();
@@ -70,6 +72,7 @@ class Analytics {
       engagementPerHour,
     };
     this.done = true;
+    Debug.success(`Analytics calculated for ${this.base}`);
   }
 
   async log(): Promise<void> {
@@ -84,6 +87,7 @@ class Analytics {
       engagement: this._engagement,
       tally: this._tally,
     });
+    Debug.success(`Analytics logged, see: ${this.base}.out.json`);
   }
 
   get duration() {
