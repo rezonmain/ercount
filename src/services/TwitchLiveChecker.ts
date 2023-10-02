@@ -16,6 +16,11 @@ class TwitchLiveChecker extends LiveChecker {
   protected async check(): Promise<void> {
     try {
       await this.api.getStreams(this.channelName);
+
+      if (this.offlineCount > 0)
+        Debug.info(`${this.channelName} is back online`);
+
+      this.offlineCount = 0;
     } catch (e) {
       if (e instanceof NotLiveError) {
         this.onNotLive();
