@@ -4,14 +4,9 @@ import fs from "fs/promises";
  * Utility functions for file operations.
  */
 export class Files {
-  static async exists(path: string): Promise<boolean> {
-    try {
-      await fs.access(path);
-      return true;
-    } catch {
-      return false;
-    }
-  }
+  static exists = async (path: string): Promise<boolean> =>
+    await Bun.file(path).exists();
+
   /**
    * Equivalent to `ls` in bash
    * @param path
