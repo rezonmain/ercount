@@ -4,10 +4,10 @@ import type {
   LoggerSuite,
   ViewCountLog,
 } from "@/types/logger.types";
-import { ChattersLogger } from "./ChattersLogger";
-import { MetaLogger } from "./MetaLogger";
-import { OutLogger } from "./OutLogger";
-import { ViewsLogger } from "./ViewsLogger";
+import { ChattersLogger } from "@/services/ChattersLogger";
+import { MetaLogger } from "@/services/MetaLogger";
+import { OutLogger } from "@/services/OutLogger";
+import { ViewsLogger } from "@/services/ViewsLogger";
 import type {
   ChattersStats,
   Tally,
@@ -71,6 +71,29 @@ class Helpers {
       });
 
       return tally.sort((a, b) => b.chats - a.chats);
+    },
+
+    /**
+     * Returns an array of ratios where the
+     * last position
+     * is the sum of all ratios,
+     * each position in the array is the sum
+     * of the ratios up to that position
+     * @param sortedRatios must sum up to 1
+     */
+    getPositionalSumOfRatios: (sortedRatios: number[]): number[] => {
+      const distribution: number[] = [];
+
+      for (let i = 0; i < sortedRatios.length; i++) {
+        if (i === 0) {
+          distribution.push(sortedRatios[i]);
+          continue;
+        }
+        const sum = sortedRatios[i] + distribution[i - 1];
+        distribution.push(sum);
+      }
+
+      return distribution.map((d) => parseFloat(d.toFixed(6)));
     },
   };
 
