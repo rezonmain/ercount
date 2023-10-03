@@ -6,6 +6,7 @@
     "dev": "NODE_ENV=dev bun --hot src/index.ts",
     "log": "NODE_ENV=dev bun run src/scripts/log.ts",
     "analyze": "bun run src/scripts/analyze.ts",
+    "adapt": "bun run src/scripts/adapt.ts",
     "lint": "eslint . --ext .ts"
   },
   "devDependencies": {
