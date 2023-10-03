@@ -5,4 +5,11 @@ class NotLiveError extends Error {
   }
 }
 
-export { NotLiveError };
+class OutOfRangeError extends Error {
+  constructor(message?: string) {
+    super(message);
+    this.name = "OutOfRangeError";
+  }
+}
+
+export { NotLiveError, OutOfRangeError };
