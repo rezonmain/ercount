@@ -177,4 +177,5 @@ dist
 config/dev.*
 config/production.*
 data/*
+!data/public/
 
